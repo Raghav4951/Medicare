@@ -1,198 +1,181 @@
 <?php
+include '../db.php';
 session_start();
-include "../config.php";
 
-if (!isset($_SESSION['role']) || $_SESSION['role'] != "patient") {
-    header("Location: ../login.php");
-    exit();
+if (!isset($_SESSION['role']) || $_SESSION['role'] != "admin") {
+  header("Location: ../login.php");
+  exit();
 }
 
-// Fetch doctors
-$result = $conn->query("SELECT * FROM doctors WHERE status = 'Active' ORDER BY id DESC"); ?>
+$doctors = mysqli_query($conn, "SELECT * FROM doctors ORDER BY id DESC");
+?>
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Doctors | MediCare+</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctors | MediCare</title>
 
-    <style>
-        :root {
-            --primary: #0d9488;
-            --bg: #f8fafc;
-        }
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #1e40af;
+      --glass: rgba(255, 255, 255, .75);
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Segoe UI';
-            background: var(--bg);
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Segoe UI;
+    }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            left: -260px;
-            width: 260px;
-            height: 100%;
-            background: #1e8c84;
-            transition: 0.3s;
-            z-index: 1000;
-        }
+    body {
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    }
 
-        .sidebar.active {
-            left: 0;
-        }
+    /* SIDEBAR */
 
-        .sidebar h2 {
-            color: #fff;
-            text-align: center;
-            margin-top: 15px;
-        }
+    .sidebar {
+      width: 270px;
+      background: linear-gradient(180deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 30px 20px;
+    }
 
-        .sidebar a {
-            display: block;
-            color: #fff;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
-        .sidebar a:hover {
-            background: #145c59;
-        }
+    .sidebar a {
+      display: block;
+      padding: 14px;
+      margin-bottom: 10px;
+      color: #e0e7ff;
+      text-decoration: none;
+      border-radius: 10px;
+    }
 
-        /* BACK BUTTON */
-        .back-btn {
-            color: white;
-            font-size: 22px;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, .2);
+    }
 
-        /* MENU BUTTON */
-        .menu-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 26px;
-            color: #fff;
-            cursor: pointer;
-        }
+    /* MAIN */
 
-        /* HEADER */
-        .header {
-            background: linear-gradient(135deg, #0d9488, #14b8a6);
-            color: #fff;
-            padding: 30px 20px 60px 60px;
-            border-radius: 0 0 30px 30px;
-        }
+    .main {
+      flex: 1;
+      padding: 40px;
+      overflow: auto;
+    }
 
-        /* CONTAINER */
-        .container {
-            padding: 20px;
-            margin-top: -40px;
-        }
+    .header {
+      font-size: 26px;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
 
-        /* CARD */
-        .doctor {
-            background: #fff;
-            padding: 18px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, .06);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* DOCTOR GRID */
 
-        /* BUTTON */
-        button {
-            background: var(--primary);
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+    .doctors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
 
-        button:hover {
-            background: #0f766e;
-        }
+    .doctor-card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .1);
+    }
 
-        /* OVERLAY */
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-        }
+    .doctor-card h3 {
+      margin-bottom: 8px;
+    }
 
-        .overlay.active {
-            display: block;
-        }
-    </style>
+    .doctor-card p {
+      color: #555;
+      margin-bottom: 12px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #ef4444;
+      color: white;
+    }
+
+    button:hover {
+      background: #dc2626;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+  <div class="sidebar">
 
-    <!-- SIDEBAR -->
-    <div class="sidebar" id="sidebar">
-        <div class="back-btn" onclick="toggleMenu()">←</div>
-        <h2>MediCare+</h2>
+    <h2>MediCare</h2>
 
-        <a href="dashboard.php">🏠 Dashboard</a>
-        <a href="book-appointment.php">📅 Book Appointment</a>
-        <a href="my-appointment.php">📋 My Appointments</a>
-        <a href="prescription.php">📜 Prescriptions</a>
-        <a href="../logout.php">🚪 Logout</a>
+    <a href="../admin/dashboard.php">📊 Dashboard</a>
+    <a href="../doctors/doctors.php">👨‍⚕️ Doctors</a>
+    <a href="../admin/appointments.php">📅 Appointments</a>
+    <a href="../admin/patient.php">🧑‍🤝‍🧑 Patients</a>
+    <a href="../login.php">🚪 Logout</a>
+
+  </div>
+
+  <div class="main">
+
+    <div class="header">Doctors Management</div>
+
+    <div class="doctors">
+
+      <?php while ($row = mysqli_fetch_assoc($doctors)) { ?>
+
+        <div class="doctor-card">
+
+          <h3><?php echo $row['name']; ?></h3>
+
+          <p><?php echo $row['specialization']; ?></p>
+          </p>
+
+          <p>
+            Status:
+            <strong style="color:
+            <?php echo ($row['status'] == "Active") ? 'green' : 'red'; ?>">
+              <?php echo $row['status']; ?>
+            </strong>
+          </p>
+
+          <div style="display:flex;gap:10px;">
+
+            <a href="../admin/toggle_doctor.php?id=<?php echo $row['id']; ?>">
+              <button style="background:#2563eb;">
+                <?php echo ($row['status'] == "Active") ? 'Deactivate' : 'Activate'; ?>
+              </button>
+            </a>
+
+            <a href="../admin/delete_doctor.php?id=<?php echo $row['id']; ?>">
+              <button style="background:#ef4444;">Delete</button>
+            </a>
+
+          </div>
+          </a>
+
+        </div>
+
+      <?php } ?>
+
     </div>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="menu-btn" onclick="toggleMenu()">☰</div>
-        <h2>👨‍⚕️ Available Doctors</h2>
-        <p>Select a doctor to book appointment</p>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="container">
-
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
-
-                <div class="doctor">
-                    <div>
-                        <h3>Dr.
-                            <?php echo htmlspecialchars($row['name']); ?>
-                        </h3>
-                        <p>
-                            <?php echo htmlspecialchars($row['specialization']); ?>
-                            .
-                            (Currently <?php echo htmlspecialchars($row['status']); ?>d)
-                        </p>
-                    </div>
-
-                    <form action="book-appointment.php" method="GET">
-                        <input type="hidden" name="doctor_id" value="<?php echo $row['id']; ?>">
-                        <button type="submit">Book</button>
-                    </form>
-                </div>
-
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p>No doctors available</p>
-        <?php endif; ?>
-
-    </div>
-
-    <script>
-        function toggleMenu() {
-            document.getElementById("sidebar").classList.toggle("active");
-            document.getElementById("overlay").classList.toggle("active");
-        }
-    </script>
+  </div>
 
 </body>
 
