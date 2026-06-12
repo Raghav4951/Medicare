@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZameenDekho Prototype</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #0b5e57;
+      --secondary: #10b981;
+      --accent: #f59e0b;
+      --bg: #f8fafc;
+      --card: rgba(255, 255, 255, 0.95);
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(15, 23, 42, 0.08);
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --shadow-hover: 0 18px 40px rgba(15, 23, 42, 0.14);
+      --radius: 22px;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(16, 185, 129, 0.10), transparent 30%),
+        radial-gradient(circle at top right, rgba(15, 118, 110, 0.10), transparent 28%),
+        linear-gradient(to bottom, #f8fafc, #eef6f4);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 60px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+    }
+
+    .logo h2 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: var(--text);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      transition: 0.3s ease;
+    }
+
+    .btn-outline {
+      background: rgba(15, 118, 110, 0.08);
+      color: var(--primary);
+      border: 1px solid rgba(15, 118, 110, 0.15);
+    }
+
+    .btn-outline:hover {
+      background: rgba(15, 118, 110, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 24px rgba(16, 185, 129, 0.30);
+    }
+
+    .container {
+      width: min(1200px, 92%);
+      margin: auto;
+      padding: 36px 0 60px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 430px;
+      border-radius: 30px;
+      padding: 60px;
+      display: flex;
+      align-items: center;
+      background:
+        linear-gradient(rgba(8, 47, 73, 0.45), rgba(15, 118, 110, 0.55)),
+        url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      box-shadow: var(--shadow);
+      margin-bottom: 40px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 260px;
+      height: 260px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: -70px;
+      left: -70px;
+      width: 220px;
+      height: 220px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 680px;
+      color: white;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      font-weight: 800;
+    }
+
+    .hero p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.92);
+      margin-bottom: 28px;
+      max-width: 580px;
+    }
+
+    .search-panel {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 20px;
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      max-width: 760px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .search-panel input,
+    .search-panel select {
+      flex: 1;
+      min-width: 180px;
+      border: none;
+      outline: none;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--text);
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 15px;
+    }
+
+    .search-panel button {
+      padding: 14px 22px;
+      border-radius: 14px;
+      border: none;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, #111827, #1f2937);
+      transition: 0.3s ease;
+    }
+
+    .search-panel button:hover {
+      transform: translateY(-2px);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 34px 0 18px;
+      gap: 15px;
+    }
+
+    .section-head h2 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 22px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .category-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffffff, #f0fdf4);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      transition: 0.35s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .category-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 24px;
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(16, 185, 129, 0.18));
+    }
+
+    .category-card h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .category-card p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .listing-card {
+      overflow: hidden;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: 0.35s ease;
+    }
+
+    .listing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .listing-image-wrap {
+      position: relative;
+      height: 230px;
+      overflow: hidden;
+    }
+
+    .listing-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+      display: block;
+    }
+
+    .listing-card:hover .listing-image-wrap img {
+      transform: scale(1.08);
+    }
+
+    .listing-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--primary);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.1);
+    }
+
+    .listing-content {
+      padding: 22px;
+    }
+
+    .listing-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+
+    .listing-top h3 {
+      font-size: 23px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .price {
+      color: var(--primary);
+      font-size: 22px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .listing-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .meta-pill {
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .listing-content p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .listing-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .listing-actions .btn {
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+    }
+
+    .btn-dark {
+      background: #111827;
+      color: white;
+    }
+
+    .btn-dark:hover {
+      transform: translateY(-2px);
+      background: #0b1220;
+    }
+
+    .btn-soft {
+      background: #ecfdf5;
+      color: var(--primary);
+      border: 1px solid rgba(16, 185, 129, 0.18);
+    }
+
+    .btn-soft:hover {
+      transform: translateY(-2px);
+      background: #d1fae5;
+    }
+
+    @media (max-width: 992px) {
+      .grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero {
+        padding: 42px 30px;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      header {
+        padding: 16px 24px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .nav-buttons {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 32px 22px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .search-panel {
+        flex-direction: column;
+      }
+
+      .search-panel input,
+      .search-panel select,
+      .search-panel button {
+        width: 100%;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .container {
+        width: 94%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-badge">Z</div>
+      <h2>ZameenDekho</h2>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-outline">Login</button>
+      <button class="btn btn-primary">Post Listing</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-tag">Verified Plots • Land • Commercial Sites</span>
+        <h1>Find Premium Land Listings With Trust</h1>
+        <p>
+          Explore verified residential plots, agricultural land, and commercial properties
+          in top locations with a clean, modern property search experience.
+        </p>
+
+        <div class="search-panel">
+          <input type="text" placeholder="Enter city or area" />
+          <select>
+            <option>Property Type</option>
+            <option>Residential Plot</option>
+            <option>Agricultural Land</option>
+            <option>Commercial Land</option>
+          </select>
+          <button>Search</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <div>
+        <h2>Categories</h2>
+        <p>Browse land listings by property type</p>
+      </div>
+    </div>
+
+    <section class="grid grid-3">
+      <div class="category-card">
+        <div class="category-icon">🏡</div>
+        <h3>Residential Plot</h3>
+        <p>Perfect plots for houses, villas, and future home investment in growing localities.</p>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">🌾</div>
+        <h3>Agricultural Land</h3>
+        <p>Explore fertile farmland and open agricultural spaces with verified ownership details.</p>
+      </div>
+
+      <div class="category-card">
+        <div class="category-icon">🏢</div>
+        <h3>Commercial Land</h3>
+        <p>Prime commercial sites ideal for offices, showrooms, warehouses, and business growth.</p>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <div>
+        <h2>Featured Listings</h2>
+        <p>Handpicked land opportunities for buyers and investors</p>
+      </div>
+    </div>
+
+    <section class="grid grid-3">
+
+      <div class="listing-card">
+        <div class="listing-image-wrap">
+          <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80"
+            alt="Plot in Agra">
+          <span class="listing-badge">Featured</span>
+        </div>
+        <div class="listing-content">
+          <div class="listing-top">
+            <h3>Plot in Agra</h3>
+            <div class="price">₹32 Lac</div>
+          </div>
+          <div class="listing-meta">
+            <span class="meta-pill">1800 sq ft</span>
+            <span class="meta-pill">Residential</span>
+            <span class="meta-pill">Verified</span>
+          </div>
+          <p>Well-located residential plot in Agra with smooth road access and strong future value.</p>
+          <div class="listing-actions">
+            <button class="btn btn-dark">View Details</button>
+            <button class="btn btn-soft">Contact</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="listing-card">
+        <div class="listing-image-wrap">
+          <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=80"
+            alt="Farm Land">
+          <span class="listing-badge">Popular</span>
+        </div>
+        <div class="listing-content">
+          <div class="listing-top">
+            <h3>Farm Land</h3>
+            <div class="price">₹48 Lac</div>
+          </div>
+          <div class="listing-meta">
+            <span class="meta-pill">2 Bigha</span>
+            <span class="meta-pill">Agricultural</span>
+            <span class="meta-pill">Verified</span>
+          </div>
+          <p>Open fertile land suitable for cultivation, farmhouse planning, or long-term investment.</p>
+          <div class="listing-actions">
+            <button class="btn btn-dark">View Details</button>
+            <button class="btn btn-soft">Contact</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="listing-card">
+        <div class="listing-image-wrap">
+          <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80"
+            alt="Commercial Plot">
+          <span class="listing-badge">Hot Deal</span>
+        </div>
+        <div class="listing-content">
+          <div class="listing-top">
+            <h3>Commercial Plot</h3>
+            <div class="price">₹75 Lac</div>
+          </div>
+          <div class="listing-meta">
+            <span class="meta-pill">2200 sq ft</span>
+            <span class="meta-pill">Commercial</span>
+            <span class="meta-pill">Main Road</span>
+          </div>
+          <p>Premium commercial land facing a main road, ideal for retail, offices, or mixed-use setup.</p>
+          <div class="listing-actions">
+            <button class="btn btn-dark">View Details</button>
+            <button class="btn btn-soft">Contact</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+</body>
+
+</html>
